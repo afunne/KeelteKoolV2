@@ -38,6 +38,13 @@ namespace KeelteKoolV2
                 .AddDefaultTokenProviders()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("CustomEmailConfirmation");
 
+            //meie kontroller on "Accounts", mitte Identity vaikimisi "Account"
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Accounts/Login";
+                options.LogoutPath = "/Accounts/Logout";
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
