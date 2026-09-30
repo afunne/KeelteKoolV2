@@ -1,3 +1,5 @@
+using KeelteKoolV2.ApplicationServices.Services;
+using KeelteKoolV2.Core.ServiceInterface;
 using KeelteKoolV2.Data;
 using KeelteKoolV2.xUnitTesting.Macros;
 using KeelteKoolV2.xUnitTesting.Mock;
@@ -22,6 +24,7 @@ namespace KeelteKoolV2.xUnitTesting
         public virtual void SetupServices(IServiceCollection services)
         {
             //teenused mida testitakse tulevad siia
+            services.AddScoped<ILanguageCoursesServices, LanguageCoursesServices>();
             services.AddScoped<IHostEnvironment, MockIHostEnvironment>();
 
             //iga test saab oma mälus oleva andmebaasi, et testid üksteist ei segaks
