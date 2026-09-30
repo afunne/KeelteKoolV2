@@ -11,5 +11,6 @@ namespace KeelteKoolV2.Data
         }
 
         //tabelid tulevad siia
+        public DbSet<LanguageCourse> LanguageCourses { get; set; }
     }
 }
