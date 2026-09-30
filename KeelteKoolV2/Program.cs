@@ -1,3 +1,8 @@
+using KeelteKoolV2.Core.Domain;
+using KeelteKoolV2.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 namespace KeelteKoolV2
 {
     public class Program
@@ -8,6 +13,26 @@ namespace KeelteKoolV2
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            //services
+
+            //dbcontext
+            builder.Services.AddDbContext<KeelteKoolV2Context>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //identity
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+                options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = true;
+                    options.Password.RequiredLength = 8;
+                    options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+                    options.Lockout.MaxFailedAccessAttempts = 3;
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                })
+                .AddEntityFrameworkStores<KeelteKoolV2Context>()
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("CustomEmailConfirmation");
 
             var app = builder.Build();
 
@@ -22,6 +47,7 @@ namespace KeelteKoolV2
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
