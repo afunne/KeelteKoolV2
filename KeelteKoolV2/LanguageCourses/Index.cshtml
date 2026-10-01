@@ -1,0 +1,41 @@
+@model IEnumerable<KeelteKoolV2.Models.LanguageCoursesViewModel>
+@{
+    int rownumber = 1;
+    ViewBag.Title = "Keelekursused";
+}
+<div>
+    <a asp-action="create" asp-controller="LanguageCourses" class="btn btn-success">Loo uus keelekursus</a>
+</div>
+
+<div class="h1">
+    Keelekursused
+</div>
+
+<form method="get">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Nr</th>
+                <th>Nimetus</th>
+                <th>Õpitatav keel</th>
+                <th>Tegevus</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Course in Model)
+            {
+                <tr>
+                    <td>@rownumber</td>
+                    <td>@Course.Nimetus</td>
+                    <td>@Course.Keel</td>
+                    <td>
+                        TODO: Add delete functionality
+                    </td>
+                    <td><a asp-action="Update" asp-route-id="@Course.Id" class="btn btn-primary">Muuda</a></td>
+                </tr>
+                rownumber++;
+            }
+        </tbody>
+    </table>
+</form>

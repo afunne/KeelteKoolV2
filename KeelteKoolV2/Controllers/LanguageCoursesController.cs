@@ -20,7 +20,15 @@ namespace KeelteKoolV2.Controllers
         public IActionResult Index()
         {
             //kõikide kursuste kuvamine tuleb hiljem, praegu pole see testitav
-            return View();
+            var result = _Context.LanguageCourses
+                .Select(c => new LanguageCourseViewModel
+                {
+                    Nimetus = c.Nimetus,
+                    Keel = c.Keel,
+                    Tase = c.Tase,
+                    Kirjeldus = c.Kirjeldus
+                }).Take(20).GroupBy(c => c.Keel);
+            return View(result);
         }
 
         [HttpGet]

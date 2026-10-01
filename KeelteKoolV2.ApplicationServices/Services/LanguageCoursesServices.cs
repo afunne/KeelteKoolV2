@@ -23,7 +23,24 @@ namespace KeelteKoolV2.ApplicationServices.Services
 
         public Task<LanguageCourse?> Update(LanguageCourseDTO dto)
         {
-            return Task.FromResult<LanguageCourse?>(null);
+            if (dto == null)
+            {
+                retunr null;
+            }
+
+            LanguageCourse domain = new LanguageCourse
+                Id = dto.Id = Guid.NewGuid(),
+                Nimetus = dto.Nimetus,
+                Keel = dto.Keel,
+                Tase = dto.Tase,
+                Kirjeldus = dto.Kirjeldus,
+                Domain.CreatedAt = DateTime.UtcNow,
+                Domain.ModifiedAt = DateTime.UtcNow,
+                };
+        await _context.AddAsync(domain);
+        await _context.SaveChangesAsync();
+
+            return Task.FromResult<LanguageCourse?>(domain);
         }
 
         public Task<LanguageCourse?> Details(Guid id)
