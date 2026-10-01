@@ -1,5 +1,6 @@
 using KeelteKoolV2.Core.DTO;
 using KeelteKoolV2.Core.ServiceInterface;
+using Microsoft.Identity.Client;
 using Xunit;
 
 namespace KeelteKoolV2.xUnitTesting
@@ -34,6 +35,22 @@ namespace KeelteKoolV2.xUnitTesting
              täpsemate tingimustega, mis kontrollivad näiteks, kas andmed on samasugused,
              kindlal kujul, kindlat tüüpi jne.
              */
-        }
+            [Fact]
+            public asynx task Should_ReturnNull_WhenDTOIsNull()
+            {
+                LanguageCourseDTO newCourse = MockLanguageCourseDTO();
+                newCourse.Keel = string.Empty;
+                newCourse.Nimetus = string.Empty;
+                
+
+                var result = await Svc<ILanguageCoursesServices>().Create(newCourse);
+                Assert.Null(result);
+                Assert.NotNull(result.Keel);
+                Assert.NotNull(result.Nimetus);
+                Assert.True(result.Keel.Length > 0);
+                Assert.False(result.Nimetus.Length < 1);
+                Assert.Equal(newCourse.Keel, result.Keel);
+                Assert.Equal(newCourse.Nimetus, result.Nimetus);
+            }
     }
 }
