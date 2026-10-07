@@ -1,5 +1,8 @@
+@model IEnumerable<KeelteKoolV2.Models.LanguageCourses.LanguageCourseViewModel>
+
 @{
     ViewData["Title"] = "Keelekursused";
+    int rownumber = 1;
 }
 
 <h1>Keelekursused</h1>
@@ -7,3 +10,33 @@
 <p>
     <a asp-action="Create" class="btn btn-primary">Lisa uus kursus</a>
 </p>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Nr</th>
+            <th>Nimetus</th>
+            <th>Õpitatav keel</th>
+            <th>Tase</th>
+            <th>Tegevus</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@rownumber</td>
+                <td>@course.Nimetus</td>
+                <td>@course.Keel</td>
+                <td>@course.Tase</td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@course.Id" method="post"
+                          onsubmit="return confirm('Kas oled kindel, et soovid kursuse kustutada?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Kustuta</button>
+                    </form>
+                </td>
+            </tr>
+            rownumber++;
+        }
+    </tbody>
+</table>

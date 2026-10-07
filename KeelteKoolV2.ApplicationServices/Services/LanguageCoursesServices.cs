@@ -16,31 +16,51 @@ namespace KeelteKoolV2.ApplicationServices.Services
 
         //TDD: meetodid on esialgu tühjad, et saaks enne sisu arendamist testid kirjutada.
         //Testid peavad praegu ebaõnnestuma (punane), pärast sisu kirjutamist õnnestuma (roheline).
-        public Task<LanguageCourse?> Create(LanguageCourseDTO dto)
-        {
-            return Task.FromResult<LanguageCourse?>(null);
-        }
-
-        public Task<LanguageCourse?> Update(LanguageCourseDTO dto)
+        public async Task<LanguageCourse?> Create(LanguageCourseDTO dto)
         {
             if (dto == null)
             {
-                retunr null;
+                return null;
             }
 
-            LanguageCourse domain = new LanguageCourse
-                Id = dto.Id = Guid.NewGuid(),
+            var domain = new LanguageCourse
+            {
+                Id = Guid.NewGuid(),
                 Nimetus = dto.Nimetus,
                 Keel = dto.Keel,
-                Tase = dto.Tase,
-                Kirjeldus = dto.Kirjeldus,
-                Domain.CreatedAt = DateTime.UtcNow,
-                Domain.ModifiedAt = DateTime.UtcNow,
-                };
-        await _context.AddAsync(domain);
-        await _context.SaveChangesAsync();
+                Tase = dto.Tase ?? string.Empty,
+                Kirjeldus = dto.Kirjeldus ?? string.Empty,
+                CreatedAt = DateTime.UtcNow,
+                ModifiedAt = DateTime.UtcNow,
+                ModifiedBy = dto.ModifiedBy
+            };
 
-            return Task.FromResult<LanguageCourse?>(domain);
+            await _context.LanguageCourses.AddAsync(domain);
+            await _context.SaveChangesAsync();
+            return domain;
+        }
+
+        public async Task<LanguageCourse?> Update(LanguageCourseDTO dto)
+        {
+            if (dto == null)
+            {
+                return null;
+            }
+
+            var domain = await _context.LanguageCourses.FindAsync(dto.Id);
+            if (domain == null)
+            {
+                return null;
+            }
+
+            domain.Nimetus = dto.Nimetus;
+            domain.Keel = dto.Keel;
+            domain.Tase = dto.Tase ?? string.Empty;
+            domain.Kirjeldus = dto.Kirjeldus ?? string.Empty;
+            domain.ModifiedAt = DateTime.UtcNow;
+            domain.ModifiedBy = dto.ModifiedBy;
+            await _context.SaveChangesAsync();
+            return domain;
         }
 
         public Task<LanguageCourse?> Details(Guid id)
@@ -48,9 +68,17 @@ namespace KeelteKoolV2.ApplicationServices.Services
             return Task.FromResult<LanguageCourse?>(null);
         }
 
-        public Task<LanguageCourse?> Delete(Guid id)
+        public async Task<LanguageCourse?> Delete(Guid id)
         {
-            return Task.FromResult<LanguageCourse?>(null);
+            var domain = await _context.LanguageCourses.FindAsync(id);
+            if (domain == null)
+            {
+                return null;
+            }
+
+            _context.LanguageCourses.Remove(domain);
+            await _context.SaveChangesAsync();
+            return domain;
         }
     }
 }

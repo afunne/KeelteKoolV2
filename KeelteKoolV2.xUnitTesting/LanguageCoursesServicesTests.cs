@@ -28,6 +28,11 @@ namespace KeelteKoolV2.xUnitTesting
 
             //kontroll (Assert)
             Assert.NotNull(result);
+            Assert.NotEqual(Guid.Empty, result.Id);
+            Assert.Equal(newCourseDTO.Nimetus, result.Nimetus);
+            Assert.Equal(newCourseDTO.Keel, result.Keel);
+            Assert.Equal(newCourseDTO.Tase, result.Tase);
+            Assert.Equal(newCourseDTO.Kirjeldus, result.Kirjeldus);
             /*
              Assert on klass, mille abil saab kontrollida andmete erinevaid tingimusi, kujusid, olekuid jne.
              Praegu kontrollitakse objekti ainult ühe tingimusega - et see ei oleks tühi.
@@ -35,22 +40,14 @@ namespace KeelteKoolV2.xUnitTesting
              täpsemate tingimustega, mis kontrollivad näiteks, kas andmed on samasugused,
              kindlal kujul, kindlat tüüpi jne.
              */
-            [Fact]
-            public asynx task Should_ReturnNull_WhenDTOIsNull()
-            {
-                LanguageCourseDTO newCourse = MockLanguageCourseDTO();
-                newCourse.Keel = string.Empty;
-                newCourse.Nimetus = string.Empty;
-                
+        }
 
-                var result = await Svc<ILanguageCoursesServices>().Create(newCourse);
-                Assert.Null(result);
-                Assert.NotNull(result.Keel);
-                Assert.NotNull(result.Nimetus);
-                Assert.True(result.Keel.Length > 0);
-                Assert.False(result.Nimetus.Length < 1);
-                Assert.Equal(newCourse.Keel, result.Keel);
-                Assert.Equal(newCourse.Nimetus, result.Nimetus);
-            }
+        [Fact]
+        public async Task Should_ReturnNull_WhenDTOIsNull()
+        {
+            var result = await Svc<ILanguageCoursesServices>().Create(null!);
+
+            Assert.Null(result);
+        }
     }
 }

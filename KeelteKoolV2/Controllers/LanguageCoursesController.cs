@@ -3,6 +3,7 @@ using KeelteKoolV2.Core.ServiceInterface;
 using KeelteKoolV2.Data;
 using KeelteKoolV2.Models.LanguageCourses;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace KeelteKoolV2.Controllers
 {
@@ -17,17 +18,19 @@ namespace KeelteKoolV2.Controllers
             _languageCoursesServices = languageCoursesServices;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //kõikide kursuste kuvamine tuleb hiljem, praegu pole see testitav
-            var result = _Context.LanguageCourses
+            var result = await _context.LanguageCourses
                 .Select(c => new LanguageCourseViewModel
                 {
+                    Id = c.Id,
                     Nimetus = c.Nimetus,
                     Keel = c.Keel,
                     Tase = c.Tase,
                     Kirjeldus = c.Kirjeldus
-                }).Take(20).GroupBy(c => c.Keel);
+                })
+                .Take(20)
+                .ToListAsync();
             return View(result);
         }
 
@@ -72,6 +75,20 @@ namespace KeelteKoolV2.Controllers
                 return RedirectToAction("Error", "Home");
             }
             //kui ei, suuname tagasi indeksisse
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _languageCoursesServices.Delete(id);
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
             return RedirectToAction(nameof(Index));
         }
     }
