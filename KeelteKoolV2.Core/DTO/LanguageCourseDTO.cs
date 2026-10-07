@@ -1,14 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace KeelteKoolV2.Core.DTO
 {
-    //Andmevahendusobjekt (DTO). See ei pea vastama andmebaasi nõuetele - selle eesmärk on
-    //andmete üleandmine frontendi kontrolleri ja backendi teenuse vahel. Osad väljad võivad
-    //olla valikulised (märgitud "?" märgiga), kuna service või kontroller saab vajadusel
-    //ise midagi muuta või juurde lisada, millele lõppkasutajal ligipääsu olla ei tohiks.
+    //Andmevahendusobjekt, ei pea vastama andmebaasis nõutud andmetele,
+    //selle eesmärk on frontendi kontrolleri ja backendi teenuse vahel
+    //andmete üle andmine, osad andmed võivad olla valikulised (märgitud "?" märgiga),
+    //kuna service või kontroller saab omalt poolt midagi vajadusel muuta
+    // või juurde lisada millel lõppkasutajal juurdepääsu olla ei tohiks.
     public class LanguageCourseDTO
     {
         public Guid? Id { get; set; }
-        public string Nimetus { get; set; } = string.Empty;
-        public string Keel { get; set; } = string.Empty;
+        public string Nimetus { get; set; }
+        public string Keel { get; set; }
         public string? Tase { get; set; }
         public string? Kirjeldus { get; set; }
 

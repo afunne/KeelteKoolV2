@@ -1,5 +1,4 @@
-using KeelteKoolV2.Core.Domain;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace KeelteKoolV2.Models.Accounts
 {
@@ -7,20 +6,17 @@ namespace KeelteKoolV2.Models.Accounts
     {
         [Required]
         [EmailAddress]
-        public string Email { get; set; } = string.Empty;
-
-        public string Name { get; set; } = string.Empty;
-
+        public string Email { get; set; }
+        public string Name { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Kirjuta Parool Uuesti")]
         [Compare("Password", ErrorMessage = "Paroolid ei ühti.")]
-        public string ConfirmPassword { get; set; } = string.Empty;
-
-        public string PlaceHolder { get; set; } = string.Empty;
+        public string ConfirmPassword { get; set; }
+        public string PlaceHolder { get; set; }
 
         public RegisterStatus AccountStatus { get; set; } = RegisterStatus.Pending;
     }

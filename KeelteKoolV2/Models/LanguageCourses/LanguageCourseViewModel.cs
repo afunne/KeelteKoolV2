@@ -1,22 +1,16 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace KeelteKoolV2.Models.LanguageCourses
+﻿namespace KeelteKoolV2.Models.LanguageCourses
 {
-    //ViewModel on vajalik kasutajale info kuvamiseks ja sealt edasi kontrollerile andmiseks.
-    //ViewModel erineb DTO-objektist selle poolest, et kõik kasutajale mittevajalikud andmed
-    //on sealt eemaldatud. Valikulised andmed, mida hiljem kasutajale näidatakse, jäävad alles.
-    //See eraldatus tagab ka selle, et kasutaja ei saa pahatahtlikult soovimatutele andmetele ligi.
+    //ViewModel on vajalik kasutajale info kuvamiseks, ja sealt edasi controllerile andmiseks, Viewmodel
+    //erineb DTO-objektist selle võrra, et kõik kasutajale mittevajalikud andmed on sealt eemaldatud.
+    //Valikulised andmed mis kuuluvad ka ka hiljem kasutajatele esitamiseks siiski jäävad.
+    //See eraldatus tagab ka selle et kasutaja ei saa pahatahtlikult soovimatutele andmetele ligipääsu. The End.
+    //and they all lived happily ever after.
     public class LanguageCourseViewModel
     {
-        public Guid Id { get; set; }
-
-        [Required]
-        public string Nimetus { get; set; } = string.Empty;
-
-        [Required]
-        public string Keel { get; set; } = string.Empty;
-
-        public string? Tase { get; set; }
-        public string? Kirjeldus { get; set; }
+        public Guid? Id { get; set; } //optional sest index vaade ei vaja seda
+        public string Nimetus { get; set; }
+        public string Keel { get; set; }
+        public string? Tase { get; set; } //optional sest index vaade ei vaja seda
+        public string? Kirjeldus { get; set; } //optional sest index vaade ei vaja seda
     }
 }

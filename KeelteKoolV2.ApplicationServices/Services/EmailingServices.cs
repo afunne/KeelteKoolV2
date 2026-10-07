@@ -1,15 +1,17 @@
-using KeelteKoolV2.Core.DTO;
+﻿using KeelteKoolV2.Core.DTO;
 using KeelteKoolV2.Core.ServiceInterface;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace KeelteKoolV2.ApplicationServices.Services
 {
     public class EmailingServices : IEmailingServices
     {
         private readonly IConfiguration _config;
-
         public EmailingServices
             (
                 IConfiguration config
@@ -39,13 +41,20 @@ namespace KeelteKoolV2.ApplicationServices.Services
                     {
                         file.CopyTo(ms);
                         ms.Position = 0;
+                        //var fileBytes = ms.ToArray();
+                        //builder.Attachments.Add(file.FileName, fileBytes, ContentType.Parse(file.ContentType));
                         builder.Attachments.Add(file.FileName, ms.ToArray());
                     }
                 }
             }
             email.Body = builder.ToMessageBody();
 
-            Send(email);
+            using var smtp = new SmtpClient();
+
+            smtp.Connect(_config.GetSection("EmailHost").Value, 587, MailKit.Security.SecureSocketOptions.StartTls);
+            smtp.Authenticate(_config.GetSection("EmailUserName").Value, _config.GetSection("EmailPassword").Value);
+            smtp.Send(email);
+            smtp.Disconnect(true);
         }
 
         public void SendEmailToken(EmailTokenDTO dto, string token)
@@ -56,19 +65,12 @@ namespace KeelteKoolV2.ApplicationServices.Services
             email.From.Add(MailboxAddress.Parse(_config.GetSection("EmailUserName").Value));
             email.To.Add(MailboxAddress.Parse(dto.To));
             email.Subject = dto.Subject;
-
             var builder = new BodyBuilder
             {
                 HtmlBody = dto.Body,
             };
+
             email.Body = builder.ToMessageBody();
-
-            Send(email);
-        }
-
-        //SMTP ühendus, kasutajanimi ja parool tulevad konfiguratsioonist (user-secrets)
-        private void Send(MimeMessage email)
-        {
             using var smtp = new SmtpClient();
 
             smtp.Connect(_config.GetSection("EmailHost").Value, 587, MailKit.Security.SecureSocketOptions.StartTls);

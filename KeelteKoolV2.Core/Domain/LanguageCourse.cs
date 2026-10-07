@@ -1,15 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace KeelteKoolV2.Core.Domain
 {
-    //Domain kaustas olev mudel näitab täpset andmekuju, millena kursuse andmeid andmebaasis
-    //hoitakse. Siin võib samuti olla valikulisi välju, kuid tüüpiliselt on neid vähem,
+    //Domain kaustas olev mudel näitab ära täpse andmekuju millena kursuse andmed andmebaasis ka
+    //hoitakse, siin võib samuti olla valikulisi andmeid, kuid tüüpiliselt on neid vähem
     //sest andmebaas hoiab tihtipeale ainult vajalikke andmeid.
     public class LanguageCourse
     {
         public Guid Id { get; set; }
-        public string Nimetus { get; set; } = string.Empty;
-        public string Keel { get; set; } = string.Empty;
-        public string Tase { get; set; } = string.Empty;
-        public string Kirjeldus { get; set; } = string.Empty;
+        public string Nimetus { get; set; }
+        public string Keel { get; set; }
+        public string Tase { get; set; }
+        public string Kirjeldus { get; set; }
 
         //Vajalikud andmeväljad, mida muudavad ainult kontroller ja/või service
         public DateTime CreatedAt { get; set; }

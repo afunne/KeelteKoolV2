@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KeelteKoolV2.Data.Migrations
 {
     [DbContext(typeof(KeelteKoolV2Context))]
-    [Migration("20260930195754_userupdate")]
+    [Migration("20260928104405_userupdate")]
     partial class userupdate
     {
         /// <inheritdoc />

@@ -1,7 +1,11 @@
-using KeelteKoolV2.Core.Domain;
+﻿using KeelteKoolV2.Core.Domain;
 using KeelteKoolV2.Core.DTO;
 using KeelteKoolV2.Core.ServiceInterface;
 using KeelteKoolV2.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace KeelteKoolV2.ApplicationServices.Services
 {
@@ -14,71 +18,76 @@ namespace KeelteKoolV2.ApplicationServices.Services
             _context = context;
         }
 
-        //TDD: meetodid on esialgu tühjad, et saaks enne sisu arendamist testid kirjutada.
-        //Testid peavad praegu ebaõnnestuma (punane), pärast sisu kirjutamist õnnestuma (roheline).
-        public async Task<LanguageCourse?> Create(LanguageCourseDTO dto)
+        public async Task<LanguageCourse> Create(LanguageCourseDTO dto)
         {
-            if (dto == null)
+            //kontrollitakse kas dto omab mingeid andmeid
+            if (dto == null) 
             {
                 return null;
             }
 
-            var domain = new LanguageCourse
-            {
-                Id = Guid.NewGuid(),
-                Nimetus = dto.Nimetus,
-                Keel = dto.Keel,
-                Tase = dto.Tase ?? string.Empty,
-                Kirjeldus = dto.Kirjeldus ?? string.Empty,
-                CreatedAt = DateTime.UtcNow,
-                ModifiedAt = DateTime.UtcNow,
-                ModifiedBy = dto.ModifiedBy
-            };
+            //tekitab uue andmebaasis istuva objekti vastava mudeli jörgi
+            LanguageCourse domain = new LanguageCourse();
 
+            //omistab andmed andmeedasikandeobjektist domeenimudelile
+            //lahendades ära küsimused mis ei lahendatud kontrolleris, nagu näiteks id, createdat, modifiedat
+            domain.Id = Guid.NewGuid();
+            //domain.Nimetus = "";
+            //domain.Keel = "";
+            //if nimetus empty, return null
+            if (dto.Nimetus.Length < 1)
+            {
+                return null;
+            }
+            if (dto.Keel.Length < 1)
+            {
+                return null;
+            }
+            domain.Keel = dto.Keel;
+            domain.Nimetus = dto.Nimetus;
+            domain.Kirjeldus = dto.Kirjeldus;
+            domain.Tase = dto.Tase;
+            domain.CreatedAt = DateTime.Now;
+            domain.ModifiedAt = DateTime.Now;
+            //later, require user id to be attached to "ModifiedBy" parameter, to know who modified last.
+
+            //Todo: check if db addition succeeded, if yes, return object, if not, null
+            //teostatakse andmebaasi lisamise tegevus
             await _context.LanguageCourses.AddAsync(domain);
             await _context.SaveChangesAsync();
+            //tagastatakse domeenile kuuluv objekt
             return domain;
         }
-
-        public async Task<LanguageCourse?> Update(LanguageCourseDTO dto)
+        public async Task<LanguageCourse> Update(LanguageCourseDTO dto)
         {
-            if (dto == null)
-            {
-                return null;
-            }
-
-            var domain = await _context.LanguageCourses.FindAsync(dto.Id);
-            if (domain == null)
-            {
-                return null;
-            }
-
+            LanguageCourse domain = new LanguageCourse();
+            domain.Id = (Guid)dto.Id;
+            domain.Kirjeldus = dto.Kirjeldus;
             domain.Nimetus = dto.Nimetus;
             domain.Keel = dto.Keel;
-            domain.Tase = dto.Tase ?? string.Empty;
-            domain.Kirjeldus = dto.Kirjeldus ?? string.Empty;
-            domain.ModifiedAt = DateTime.UtcNow;
-            domain.ModifiedBy = dto.ModifiedBy;
-            await _context.SaveChangesAsync();
+            domain.ModifiedAt = DateTime.Now;
+            domain.CreatedAt = (DateTime)dto.CreatedAt;
+            domain.Tase = dto.Tase;
+            _context.ChangeTracker.Clear(); //<--- puhastab hetkel jälgitud konteksti
+            _context.LanguageCourses.Update(domain);
+            var result = await _context.SaveChangesAsync();
+
             return domain;
         }
-
-        public Task<LanguageCourse?> Details(Guid id)
+        public async Task<LanguageCourse> DetailsAsync(Guid id)
         {
-            return Task.FromResult<LanguageCourse?>(null);
+            var result = await _context.LanguageCourses
+                .FirstOrDefaultAsync(x => x.Id == id);
+            return result;
         }
-
-        public async Task<LanguageCourse?> Delete(Guid id)
+        public async Task<LanguageCourse> Delete(Guid id)
         {
-            var domain = await _context.LanguageCourses.FindAsync(id);
-            if (domain == null)
-            {
-                return null;
-            }
+            var result = await _context.LanguageCourses
+            .FirstOrDefaultAsync(x => x.Id == id);
 
-            _context.LanguageCourses.Remove(domain);
+            _context.LanguageCourses.Remove(result);
             await _context.SaveChangesAsync();
-            return domain;
+            return result;
         }
     }
 }

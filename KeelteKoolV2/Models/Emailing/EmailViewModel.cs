@@ -1,4 +1,4 @@
-namespace KeelteKoolV2.Models.Emailing
+﻿namespace KeelteKoolV2.Models.Emailing
 {
     public class EmailViewModel
     {

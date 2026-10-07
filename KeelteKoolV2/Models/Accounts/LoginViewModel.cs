@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace KeelteKoolV2.Models.Accounts
 {
@@ -7,12 +7,12 @@ namespace KeelteKoolV2.Models.Accounts
         [Required]
         [EmailAddress]
         [Display(Name = "Emailiaadress")]
-        public string Email { get; set; } = string.Empty;
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Parool")]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; }
 
         [Display(Name = "Mäleta sisselogitust")]
         public bool RememberMe { get; set; }

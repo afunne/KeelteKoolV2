@@ -1,4 +1,4 @@
-using KeelteKoolV2.Core.Domain;
+﻿using KeelteKoolV2.Core.Domain;
 using KeelteKoolV2.Core.DTO;
 using KeelteKoolV2.Core.ServiceInterface;
 using KeelteKoolV2.Models.Accounts;
@@ -14,6 +14,10 @@ namespace KeelteKoolV2.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailingServices _emailingServices;
+        public IActionResult Index()
+        {
+            return NotFound();
+        }
 
         public AccountsController
             (
@@ -26,12 +30,6 @@ namespace KeelteKoolV2.Controllers
             _signInManager = signInManager;
             _emailingServices = emailingServices;
         }
-
-        public IActionResult Index()
-        {
-            return NotFound();
-        }
-
         // Sisukord:
         //
         // Registreerimine
@@ -54,13 +52,12 @@ namespace KeelteKoolV2.Controllers
         }
 
         /// <summary>
-        /// Registreerib kasutaja andmebaasi ja saadab kasutajale kinnitusemaili
+        /// Registers a user in db, sends email to user for confirmation
         /// </summary>
         /// <param name="vm"></param>
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel vm)
         {
             if (ModelState.IsValid)
@@ -71,7 +68,7 @@ namespace KeelteKoolV2.Controllers
                     Name = vm.Name,
                     Email = vm.Email,
                     Placeholder = vm.PlaceHolder,
-                    AccountStatus = RegisterStatus.Pending
+                    AccountStatus = (Core.Domain.RegisterStatus)Models.Accounts.RegisterStatus.Pending
                 };
 
                 var result = await _userManager.CreateAsync(user, vm.Password);
@@ -86,7 +83,7 @@ namespace KeelteKoolV2.Controllers
                     newsignup.Token = token;
                     newsignup.Body = $"Palun kinnita oma konto vajutades <a href=\"{confirmationLink}\">siia</a>";
                     newsignup.Subject = "Keeltekooli registreerimine";
-                    newsignup.To = vm.Email;
+                    newsignup.To = user.Email;
 
                     if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
@@ -94,7 +91,15 @@ namespace KeelteKoolV2.Controllers
                     }
 
                     _emailingServices.SendEmailToken(newsignup, token);
-
+                    List<string> errordatas =
+                        [
+                        "Area", "Accounts",
+                        "Issue", "Success",
+                        "StatusMessage", "Registration Sucesss",
+                        "ActedOn", $"{vm.Email}",
+                        "CreatedAccountData", $"{vm.Email}\n{vm.PlaceHolder}\n[password hidden]\n[password hidden]"
+                        ];
+                    ViewBag.ErrorDatas = errordatas;
                     ViewBag.ErrorTitle = "You have successfully registered";
                     ViewBag.ErrorMessage = "Before you can log in, please confirm email from the link" +
                         "\nwe have emailed to your email address.";
@@ -107,47 +112,53 @@ namespace KeelteKoolV2.Controllers
                 }
             }
 
-            return View(vm);
+            return View();
         }
 
         /// <summary>
-        /// Kasutaja jõuab siia, kui ta vajutab emailis olevale lingile
+        /// User is returned to this view, when link in email clicked.
         /// </summary>
-        /// <param name="userId">kasutaja id</param>
-        /// <param name="token">kinnitustoken</param>
-        /// <returns>Kinnitamise vaade</returns>
+        /// <param name="userID">users id</param>
+        /// <param name="token">clicktoken</param>
+        /// <returns>This view</returns>
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string? userId, string? token)
+        public async Task<IActionResult> ConfirmEmail (string userID, string token)
         {
-            if (userId == null || token == null)
+            if (userID == null || token == null) 
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userID);
 
-            if (user == null)
+            if (user == null) 
             {
-                ViewBag.ErrorMessage = $"The user with id of {userId} is not valid";
+                ViewBag.ErrorMessage = $"The user with id of {userID} is not valid";
                 return NotFound();
             }
-
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            ViewBag.IsSuccess = result.Succeeded;
-            return View();
+            if (result.Succeeded)
+            {
+                ViewBag.IsSuccess = true;
+                return View();
+            }
+            else
+            {
+                ViewBag.IsSuccess = false;
+                return View(); 
+            }
+            return RedirectToAction("Index", "Home");
         }
 
-        /*     S I S S E L O G I M I N E     */
-
         /// <summary>
-        /// Tagastab sisselogimise vaate
+        /// gets the login view
         /// </summary>
         /// <param name="returnUrl"></param>
         /// <returns></returns>
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Login(string? returnUrl)
+        public async Task<IActionResult> Login(string? returnUrl)
         {
             return View();
         }
@@ -160,7 +171,6 @@ namespace KeelteKoolV2.Controllers
         /// <returns></returns>
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl)
         {
             if (ModelState.IsValid)
@@ -173,7 +183,7 @@ namespace KeelteKoolV2.Controllers
                 }
 
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, true);
-                if (result.Succeeded)
+                if (result.Succeeded) 
                 {
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
@@ -195,24 +205,20 @@ namespace KeelteKoolV2.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
-        /*     K O N T O T A A S T E     */
-
         [HttpGet]
-        public IActionResult ChangePassword()
+        public IActionResult ChangePassword() 
         {
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePassword (ChangePasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -241,7 +247,6 @@ namespace KeelteKoolV2.Controllers
 
             return View(model);
         }
-
         [HttpGet]
         [AllowAnonymous]
         public IActionResult ForgotPassword()
@@ -251,7 +256,6 @@ namespace KeelteKoolV2.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
@@ -270,8 +274,9 @@ namespace KeelteKoolV2.Controllers
                     };
 
                     _emailingServices.SendEmail(emailDto);
+
+                    return View("ForgotPasswordConfirmation");
                 }
-                //sama vaade ka siis kui kasutajat ei ole, et ei saaks emaile "läbi proovida"
                 return View("ForgotPasswordConfirmation");
             }
             return View(model);

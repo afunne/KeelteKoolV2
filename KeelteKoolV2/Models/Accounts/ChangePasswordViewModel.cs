@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace KeelteKoolV2.Models.Accounts
 {
@@ -15,7 +15,6 @@ namespace KeelteKoolV2.Models.Accounts
         public string NewPassword { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
-        [Display(Name = "Uus parool uuesti")]
         [Compare("NewPassword", ErrorMessage = "Uus parool ja selle teine kirje ei kattu")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
