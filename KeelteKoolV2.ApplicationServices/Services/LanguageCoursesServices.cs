@@ -84,6 +84,10 @@ namespace KeelteKoolV2.ApplicationServices.Services
         {
             var result = await _context.LanguageCourses
             .FirstOrDefaultAsync(x => x.Id == id);
+            if (result == null)
+            {
+                return null;
+            }
 
             _context.LanguageCourses.Remove(result);
             await _context.SaveChangesAsync();

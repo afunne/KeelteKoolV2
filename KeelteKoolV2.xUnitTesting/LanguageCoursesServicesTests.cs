@@ -17,6 +17,8 @@ namespace KeelteKoolV2.xUnitTesting
         // 3 - Mis tingimustel tulemust kontrollitakse, peale tegevust
         //                  1           2           3
         //                  \/          \/          \/
+        
+        
         public async Task Should_AddNewCourse_WhenResultIsReturned()
         {
             //ülesseade

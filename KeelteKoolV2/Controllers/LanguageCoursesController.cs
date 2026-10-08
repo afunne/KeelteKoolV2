@@ -29,7 +29,7 @@ namespace KeelteKoolV2.Controllers
                     Id = x.Id,
                     Nimetus = x.Nimetus,
                     Keel = x.Keel,
-                }).Take(20).OrderBy(x => x.Keel);
+                }).OrderBy(x => x.Keel).Take(20);
             return View(result);
 
         }
@@ -143,12 +143,11 @@ namespace KeelteKoolV2.Controllers
                 ModifiedAt = vm.ModifiedAt
             };
             var result = await _languageCoursesServices.Update(dto);
-            var resultId = result.Id;
             if (result == null)
             {
                 return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Update), new { id = resultId });
+            return RedirectToAction(nameof(Update), new { id = result.Id });
         }
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
@@ -173,6 +172,17 @@ namespace KeelteKoolV2.Controllers
             ViewData["ViewType"] = "delete";
 
             return View("DetailsDelete", vm);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var result = await _languageCoursesServices.Delete(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -37,10 +37,12 @@
                         @if (signInManager.IsSignedIn(User))
                             {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Manage">Halda kontot</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="ChangePassword">Halda kontot</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Accounts" asp-action="Logout">Logi Välja</a>
+                                <form asp-area="" asp-controller="Accounts" asp-action="Logout" method="post">
+                                    <button type="submit" class="nav-link btn btn-link text-dark">Logi Välja</button>
+                                </form>
                             </li>
 
                             } 

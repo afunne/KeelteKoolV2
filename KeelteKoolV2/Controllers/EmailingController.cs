@@ -19,23 +19,12 @@ namespace KeelteKoolV2.Controllers
         [HttpPost]
         public IActionResult SendEmail(EmailViewModel vm)
         {
-            var isFiles = Request.Form.Files.Any();
-            List<IFormFile> files = null;
-            if (isFiles != null)
-            {
-                files = Request.Form.Files.ToList();
-            }
-            else
-            {
-                files = new List<IFormFile>();
-            }
-
             var emailDTO = new EmailDTO
             {
                 To = vm.To,
                 Subject = vm.Subject,
                 Body = vm.Body,
-                Attachment = (List<IFormFile>)vm.Attachment,
+                Attachment = Request.Form.Files.ToList(),
             };
             _emailingServices.SendEmail(emailDTO);
             return RedirectToAction(nameof(Index));

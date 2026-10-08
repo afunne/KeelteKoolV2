@@ -19,6 +19,8 @@ namespace KeelteKoolV2
             //services
             builder.Services.AddScoped<IEmailingServices, EmailingServices>();
             builder.Services.AddScoped<ILanguageCoursesServices, LanguageCoursesServices>();
+            builder.Services.AddScoped<IFilesServices, FilesServices>();
+            builder.Services.AddScoped<ILecturersServices, LecturersServices>();
             //apiclients
 
             //dbcontext
@@ -40,7 +42,12 @@ namespace KeelteKoolV2
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("CustomEmailConfirmation");
 
             //auth
-
+            //meie kontroller on "Accounts", mitte Identity vaikimisi "Account"
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Accounts/Login";
+                options.LogoutPath = "/Accounts/Logout";
+            });
 
             var app = builder.Build();
 
@@ -55,6 +62,7 @@ namespace KeelteKoolV2
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();

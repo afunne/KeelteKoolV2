@@ -45,12 +45,14 @@ else
     </dl>
     @if (ViewBag.ViewType == "delete")
     {
-        <a asp-action="DeleteConfirmed" asp-controller="LanguageCourses" asp-route-id="@Model.Id" class="btn btn-danger">Kustuta</a>
+        <form asp-action="DeleteConfirmed" asp-controller="LanguageCourses" asp-route-id="@Model.Id" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger">Kustuta</button>
+        </form>
         <a asp-action="Index" asp-controller="LanguageCourses" class="btn btn-primary">Tühista</a>
     }
     else
     {
-        <a asp-action="Update" asp-controller="LanguageCourses" class="btn btn-warning">Muuda</a>
+        <a asp-action="Update" asp-controller="LanguageCourses" asp-route-id="@Model.Id" class="btn btn-warning">Muuda</a>
         <a asp-action="Index" asp-controller="LanguageCourses" class="btn btn-primary">Tagasi</a>
     }
     
