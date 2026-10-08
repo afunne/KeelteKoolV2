@@ -18,6 +18,7 @@ namespace KeelteKoolV2.xUnitTesting
             dto.FirstName = "Test";
             dto.LastName = "Test";
             dto.Qualifications = "Testicles";
+            dto.UserID = "TestUser";
             //dto.Image = 
 
             //tegevus
@@ -107,6 +108,7 @@ namespace KeelteKoolV2.xUnitTesting
                 FirstName = "Test",
                 LastName = "Test",
                 Qualifications = "Testicles",
+                UserID = "TestUser",
             };
         }
     }
