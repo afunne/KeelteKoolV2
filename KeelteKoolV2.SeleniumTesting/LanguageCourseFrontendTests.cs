@@ -13,8 +13,11 @@ namespace KeelteKoolV2.SeleniumTesting
         public void Should_NavigateToIndex_AddSpaceshipWithCorrectData_ReturnToIndex()
         {
             /* Ülesseade */
-            IWebDriver driver = new FirefoxDriver(); //brauserit juhtiv ja seal tegutsev draiver
-            driver.Url = "https://localhost:7191/"; //navigeeritav aadress
+            var options = new FirefoxOptions();
+            // allow navigating to localhost with self-signed / dev certificates
+            options.AcceptInsecureCertificates = true;
+            IWebDriver driver = new FirefoxDriver(options); //brauserit juhtiv ja seal tegutsev draiver
+            driver.Navigate().GoToUrl("https://localhost:7191/"); //navigeeritav aadress
             Thread.Sleep(3000);
             IWebElement navigateToLanguageCourse = driver.FindElement(By.LinkText("Keelekursused"));//otsime tesitava osa lingi
             navigateToLanguageCourse.Click(); //simuleeritud tegevus elemendiga, antud juhul klikk
