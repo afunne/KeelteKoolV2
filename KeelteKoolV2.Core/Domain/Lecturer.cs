@@ -12,7 +12,7 @@ namespace KeelteKoolV2.Core.Domain
 
         // Fullname TBA
         public string Qualifications { get; set; }
-        public string UserID { get; set; }
+        public string? UserID { get; set; }
         //public ICollection<LanguageSubject> LanguageSubjects { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ModifiedAt { get; set; }

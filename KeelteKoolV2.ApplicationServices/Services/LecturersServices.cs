@@ -29,6 +29,14 @@ namespace KeelteKoolV2.ApplicationServices.Services
             //tekitab uue andmebaasis istuva objekti ja omistab andmed dto-st
             Lecturer domain = new Lecturer();
             domain.Id = Guid.NewGuid();
+            if (string.IsNullOrEmpty(dto.FirstName))
+            {
+                dto.FirstName = "Jane";
+            }
+            if (string.IsNullOrEmpty(dto.LastName))
+            {
+                dto.LastName = "Doe";
+            }
             domain.FirstName = dto.FirstName;
             domain.LastName = dto.LastName;
             domain.Qualifications = dto.Qualifications;
@@ -49,7 +57,7 @@ namespace KeelteKoolV2.ApplicationServices.Services
             domain.LastName = dto.LastName;
             domain.Qualifications = dto.Qualifications;
             domain.UserID = dto.UserID;
-            domain.CreatedAt = dto.CreatedAt;
+            domain.CreatedAt = dto.CreatedAt ?? DateTime.Now;
             domain.ModifiedAt = DateTime.Now;
 
             _context.ChangeTracker.Clear(); //<--- puhastab hetkel jälgitud konteksti
